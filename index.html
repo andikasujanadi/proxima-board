@@ -10,12 +10,14 @@
     <link rel="stylesheet" href="./assets/library/jendelajs/theme/jendela-linux.css">
     <link rel="stylesheet" href="./assets/library/jendelajs/theme/jendela-retro.css">
     <style type="text/tailwindcss">
-
+        .body{
+            @apply leading-4 font-medium text-sm;
+        }
     </style>
 </head>
 
 <body>
-    <div onclick="openWindow()"
+    <div onclick="openNoteForm()"
         class="fixed right-4 top-4 bg-lime-300 border border-2 border-black font-medium px-2 pe-3 py-1 text-black font-xl rounded-xl cursor-pointer flex gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -29,6 +31,21 @@
         </svg>
         <div class="my-auto">
             Add note
+        </div>
+    </div>
+    <div onclick="toggleClose()"
+        class="fixed right-36 top-4 bg-red-300 border border-2 border-black font-medium px-2 pe-3 py-1 text-black font-xl rounded-xl cursor-pointer flex gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="icon icon-tabler icons-tabler-outline icon-tabler-table-minus my-auto">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M12.5 21h-7.5a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10" />
+            <path d="M3 10h18" />
+            <path d="M10 3v18" />
+            <path d="M16 19h6" />
+        </svg>
+        <div class="my-auto">
+            Remove note
         </div>
     </div>
     <div class="hidden">
@@ -66,10 +83,11 @@
         const editButton = `<div onclick="pointThis(this); editNote();" class="headerButton">
             <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="currentColor"  class="icon icon-tabler icons-tabler-filled icon-tabler-settings"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14.647 4.081a.724 .724 0 0 0 1.08 .448c2.439 -1.485 5.23 1.305 3.745 3.744a.724 .724 0 0 0 .447 1.08c2.775 .673 2.775 4.62 0 5.294a.724 .724 0 0 0 -.448 1.08c1.485 2.439 -1.305 5.23 -3.744 3.745a.724 .724 0 0 0 -1.08 .447c-.673 2.775 -4.62 2.775 -5.294 0a.724 .724 0 0 0 -1.08 -.448c-2.439 1.485 -5.23 -1.305 -3.745 -3.744a.724 .724 0 0 0 -.447 -1.08c-2.775 -.673 -2.775 -4.62 0 -5.294a.724 .724 0 0 0 .448 -1.08c-1.485 -2.439 1.305 -5.23 3.744 -3.745a.722 .722 0 0 0 1.08 -.447c.673 -2.775 4.62 -2.775 5.294 0zm-2.647 4.919a3 3 0 1 0 0 6a3 3 0 0 0 0 -6z" /></svg>
             </div>`
-        document.addEventListener("DOMContentLoaded", function () {
-            console.log("DOM is fully loaded!");
-            addNote();
 
+        const defaultNote = "Why created a note without a note in it?";
+
+        document.addEventListener("DOMContentLoaded", function () {
+            addNote();
         });
 
 
@@ -80,7 +98,7 @@
         }
 
         let newNoteWindow;
-        function openWindow() {
+        function openNoteForm() {
             if (!document.getElementById("newNoteWindow")) {
                 const addNoteForm = document.getElementById("addNoteForm");
                 if (!addNoteForm) return;
@@ -104,6 +122,7 @@
         }
 
         function addNote() {
+            toggleClose(false);
             let title = "";
             let value = "";
             try {
@@ -112,6 +131,7 @@
                 value = document.getElementById('noteValue').value.replace(/\n/g, "<br>");
             } catch (error) { }
             title = title == '' ? 'New Note' : title
+            value = value == '' ? defaultNote : value
             let note = jendelaJS.addWindow({
                 title: title,
                 theme: "jendela-retro",
@@ -150,12 +170,15 @@
             }
         }
 
-        function toggleClose() {
+        function toggleClose(state = "-") {
             const a = document.querySelectorAll('.note .headerButtonClose');
-            console.log(a)
             a.forEach(b => {
-                b.classList.toggle('hidden');
-                console.log(b)
+                if (state == '-') {
+                    b.classList.toggle('hidden');
+                }
+                else {
+                    b.classList.toggle('hidden', !state);
+                }
             });
         }
 
