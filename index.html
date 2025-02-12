@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Proxima Board</title>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="./assets/library/jendelajs/jendela.css">
+    <link rel="stylesheet" href="./assets/library/jendelajs/theme/jendela-linux.css">
+    <link rel="stylesheet" href="./assets/library/jendelajs/theme/jendela-retro.css">
+    <style type="text/tailwindcss">
+
+    </style>
+</head>
+
+<body>
+    <div onclick="openWindow()"
+        class="fixed right-4 top-4 bg-lime-300 border border-2 border-black font-medium px-2 pe-3 py-1 text-black font-xl rounded-xl cursor-pointer flex gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="icon icon-tabler icons-tabler-outline icon-tabler-table-plus my-auto">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M12.5 21h-7.5a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v7.5" />
+            <path d="M3 10h18" />
+            <path d="M10 3v18" />
+            <path d="M16 19h6" />
+            <path d="M19 16v6" />
+        </svg>
+        <div class="my-auto">
+            Add note
+        </div>
+    </div>
+    <div class="hidden">
+        <div id="addNoteForm" class="overflow-auto h-full flex flex-col gap-2 p-2">
+            <div class="flex flex-col">
+                <div class="font-medium">Title</div>
+                <input jendela-id="title" class="border-2 border-black outline-none p-2 rounded-xl bg-white"
+                    type="text" />
+            </div>
+            <div class="flex flex-col">
+                <div class="font-medium">Note</div>
+                <textarea jendela-id="noteValue" class="border-2 border-black outline-none p-2 rounded-xl bg-white"
+                    rows="4"></textarea>
+            </div>
+            <div onclick="addNote()"
+                class="ms-auto bg-lime-300 border border-2 border-black font-medium px-2 pe-3 py-1 text-black font-xl rounded-xl cursor-pointer flex gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-table-share my-auto">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M12 21h-7a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v8" />
+                    <path d="M3 10h18" />
+                    <path d="M10 3v18" />
+                    <path d="M16 22l5 -5" />
+                    <path d="M21 21.5v-4.5h-4.5" />
+                </svg>
+                <div class="my-auto">
+                    Done
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="./assets/library/jendelajs/jendela.umd.js"></script>
+    <script>
+        const editButton = `<div onclick="pointThis(this); editNote();" class="headerButton">
+            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="currentColor"  class="icon icon-tabler icons-tabler-filled icon-tabler-settings"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14.647 4.081a.724 .724 0 0 0 1.08 .448c2.439 -1.485 5.23 1.305 3.745 3.744a.724 .724 0 0 0 .447 1.08c2.775 .673 2.775 4.62 0 5.294a.724 .724 0 0 0 -.448 1.08c1.485 2.439 -1.305 5.23 -3.744 3.745a.724 .724 0 0 0 -1.08 .447c-.673 2.775 -4.62 2.775 -5.294 0a.724 .724 0 0 0 -1.08 -.448c-2.439 1.485 -5.23 -1.305 -3.745 -3.744a.724 .724 0 0 0 -.447 -1.08c-2.775 -.673 -2.775 -4.62 0 -5.294a.724 .724 0 0 0 .448 -1.08c-1.485 -2.439 1.305 -5.23 3.744 -3.745a.722 .722 0 0 0 1.08 -.447c.673 -2.775 4.62 -2.775 5.294 0zm-2.647 4.919a3 3 0 1 0 0 6a3 3 0 0 0 0 -6z" /></svg>
+            </div>`
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("DOM is fully loaded!");
+            addNote();
+
+        });
+
+
+        let notePointer;
+        function pointThis(e) {
+            let container = e.closest(".jendela");
+            notePointer = container;
+        }
+
+        let newNoteWindow;
+        function openWindow() {
+            if (!document.getElementById("newNoteWindow")) {
+                const addNoteForm = document.getElementById("addNoteForm");
+                if (!addNoteForm) return;
+                newNoteWindow = jendelaJS.addWindow({
+                    title: "Add a new note",
+                    theme: "jendela-retro",
+                    minWidth: 260,
+                    height: 322,
+                    top: 66,
+                    right: 16,
+                    resizeButton: false,
+                    body: `
+                    <div id="newNoteWindow" class="overflow-auto h-full flex flex-col gap-2 p-2">
+                    ${addNoteForm.innerHTML}
+                    </div>
+                    `
+                });
+            } else {
+                newNoteWindow.element.focus();
+            }
+        }
+
+        function addNote() {
+            let title = "";
+            let value = "";
+            try {
+                newNoteWindow.close();
+                title = document.getElementById('title').value;
+                value = document.getElementById('noteValue').value.replace(/\n/g, "<br>");
+            } catch (error) { }
+            title = title == '' ? 'New Note' : title
+            let note = jendelaJS.addWindow({
+                title: title,
+                theme: "jendela-retro",
+                minimizeButton: false,
+                resizeButton: false,
+                body: `
+                    <div class="p-2">
+                    ${value}
+                    </div>
+                    `
+            });
+            const a = note.element.querySelector('.headerButtonContainer');
+            const b = note.element.querySelector('.headerButtonClose');
+            b.classList.add('hidden');
+            a.insertAdjacentHTML('afterbegin', editButton);
+            a.classList.add('note');
+        }
+
+        let editNoteWindow;
+        function editNote() {
+            if (!document.getElementById("editNote")) {
+                editNoteWindow = jendelaJS.addWindow({
+                    title: "Edit Note",
+                    theme: "jendela-retro",
+                    width: 500,
+                    height: 300,
+                    body: `
+                    <div id="editNote" class="p-2">
+                    
+                    </div>
+                    `
+                });
+            }
+            else {
+                editNoteWindow.close();
+            }
+        }
+
+        function toggleClose() {
+            const a = document.querySelectorAll('.note .headerButtonClose');
+            console.log(a)
+            a.forEach(b => {
+                b.classList.toggle('hidden');
+                console.log(b)
+            });
+        }
+
+    </script>
+</body>
+
+</html>
